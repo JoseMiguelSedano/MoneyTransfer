@@ -33,6 +33,7 @@ class Transaccion(ABC):
     def fecha(self):
         return self.__fecha
 
+    @abstractmethod
     def mostrar_tipo(self):
         "Mostrar tipo"
 
@@ -49,6 +50,10 @@ class Gasto(Transaccion):
 
 def menu():
     "Funcion del menu principal"
+    historial_transacciones = []
+    contador_de_ids = 1
+    saldo = 0.0
+
     while True:
         print("<<< MONEY TRANSFER >>>")
         print("Bienvenido al sistema de Money Transfer")
@@ -63,24 +68,28 @@ def menu():
                 tipo = input("Ingrese el tipo de transaccion a realizar (I / G): ")
                 if tipo == 'I':
                     print("Tipo de transacción: Ingreso")
-                    id = 1
                     monto = float(input("Ingrese el monto: "))
                     categoria = input("Ingrese la categoría: ")
                     fecha = input("Ingrese la fecha: ")
-                    nuevo_ingreso = Ingreso(id, "Ingreso", monto, categoria, fecha)
+                    nuevo_ingreso = Ingreso(contador_de_ids, "Ingreso", monto, categoria, fecha)
                     print(f"{nuevo_ingreso.mostrar_tipo()} registrado")
                     print()
+                    historial_transacciones.append(nuevo_ingreso)
+                    contador_de_ids += 1
+                    saldo += nuevo_ingreso.monto
                     break
 
                 elif tipo == 'G':
                     print("Tipo de transacción: Gasto")
-                    id = 1
                     monto = float(input("Ingrese el monto: "))
                     categoria = input("Ingrese la categoría: ")
                     fecha = input("Ingrese la fecha: ")
-                    nuevo_gasto = Gasto(id, "Gasto", monto, categoria, fecha)
+                    nuevo_gasto = Gasto(contador_de_ids, "Gasto", monto, categoria, fecha)
                     print(f"{nuevo_gasto.mostrar_tipo()} registrado")
                     print()
+                    historial_transacciones.append(nuevo_gasto)
+                    contador_de_ids += 1
+                    saldo -= nuevo_gasto.monto
                     break
 
                 else:
@@ -88,12 +97,18 @@ def menu():
                     print()
 
         elif opcion == "2":
-            None
+            print(f"Tienes {len(historial_transacciones)} transacciones hechas")
+            print(f"Tu saldo actual es: {saldo}")
+            print()
+
         elif opcion == "3":
             print("Gracias por usar Money Transfer")
             print("Hasta luego :D")
+            print()
             break
         else:
             print("Opción no valida, intente nuevamente")
+            print()
+
 
 menu()
